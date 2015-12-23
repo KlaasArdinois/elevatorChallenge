@@ -2,6 +2,11 @@
     init: function(elevators, floors) {
         var DOWN = 0;
         var UP = 1;
+        
+        $.each(elevators, function(index, elevator) {
+            var startFloor = Math.floor( index / (elevators.length-1) * floors.length);
+            elevator.goToFloor(startFloor);            
+        });
 
         var floorWaiting = [];
 
