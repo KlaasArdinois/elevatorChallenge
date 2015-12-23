@@ -2,10 +2,14 @@
     init: function(elevators, floors) {
         var DOWN = 0;
         var UP = 1;
-        
+
         $.each(elevators, function(index, elevator) {
-            var startFloor = Math.floor( index / (elevators.length-1) * floors.length);
-            elevator.goToFloor(startFloor);            
+            if(elevators.length > 1) {
+                var startFloor = Math.floor( index / (elevators.length-1) * floors.length);
+                elevator.goToFloor(startFloor); 
+            }
+            elevator.name = "E"+index;
+            elevator.startFloor = startFloor;                       
         });
 
         var floorWaiting = [];
@@ -35,18 +39,19 @@
                         }
                     });
                     buttonsPressed = unique;
-                    
+
                     //find closest floor in list
                     var closestFloorIndex = 0;
                     var closestDistance = 100000;
-                    
+
                     $.each(buttonsPressed, function(index, button) {
                         if( Math.abs(button - elevator.currentFloor()) < closestDistance ) {
                             closestDistance = Math.abs(button - elevator.currentFloor());
                             closestFloorIndex = index;
                         }
                     });
-                    
+
+                    console.log(elevator.name + " ==> " + buttonsPressed[closestFloorIndex] + " / drop");
                     elevator.goToFloor(buttonsPressed.splice(closestFloorIndex,1)[0]);
                 }
                 //pick up waiting
@@ -61,10 +66,12 @@
                             }
                         }                        
                     });
+                    console.log(elevator.name + " ==> " + targetFloor + " / pickup");
                     elevator.goToFloor(targetFloor);                    
                 }
             });
             elevator.on("stopped_at_floor", function (floor) {
+                console.log(elevator.name + " stopping at "+floor);
                 floorWaiting[floor][UP] = false;
                 floorWaiting[floor][DOWN] = false;
             });
