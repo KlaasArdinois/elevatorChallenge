@@ -30,7 +30,19 @@
                         }
                     });
                     buttonsPressed = unique;
-                    elevator.goToFloor(buttonsPressed.splice(0,1)[0]);
+                    
+                    //find closest floor in list
+                    var closestFloorIndex = 0;
+                    var closestDistance = 100000;
+                    
+                    $.each(buttonsPressed, function(index, button) {
+                        if( Math.abs(button - elevator.currentFloor()) < closestDistance ) {
+                            closestDistance = Math.abs(button - elevator.currentFloor());
+                            closestFloorIndex = index;
+                        }
+                    });
+                    
+                    elevator.goToFloor(buttonsPressed.splice(closestFloorIndex,1)[0]);
                 }
                 //pick up waiting
                 else {
