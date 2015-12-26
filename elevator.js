@@ -27,32 +27,23 @@
         });
 
         $.each(elevators, function(index, elevator) {
-            var buttonsPressed = [];
             elevator.on("idle", function() {
                 //places to go?
-                if(buttonsPressed.length > 0) {
-                    //filter out double destinations
-                    var unique = [];
-                    $.each(buttonsPressed, function(index, button) {
-                        if($.inArray(button, unique) === -1) {
-                            unique.push(button);
-                        }
-                    });
-                    buttonsPressed = unique;
-
+                if(elevator.getPressedFloors().length > 0) {
+                    
                     //find closest floor in list
                     var closestFloorIndex = 0;
                     var closestDistance = 100000;
 
-                    $.each(buttonsPressed, function(index, button) {
+                    $.each(elevator.getPressedFloors(), function(index, button) {
                         if( Math.abs(button - elevator.currentFloor()) < closestDistance ) {
                             closestDistance = Math.abs(button - elevator.currentFloor());
                             closestFloorIndex = index;
                         }
                     });
 
-                    console.log(elevator.name + " ==> " + buttonsPressed[closestFloorIndex] + " / drop");
-                    elevator.goToFloor(buttonsPressed.splice(closestFloorIndex,1)[0]);
+                    console.log(elevator.name + " ==> " + elevator.getPressedFloors()[closestFloorIndex] + " / drop");
+                    elevator.goToFloor(elevator.getPressedFloors()[closestFloorIndex]);
                 }
                 //pick up waiting
                 else {
@@ -71,12 +62,8 @@
                 }
             });
             elevator.on("stopped_at_floor", function (floor) {
-                console.log(elevator.name + " stopping at "+floor);
                 floorWaiting[floor][UP] = false;
                 floorWaiting[floor][DOWN] = false;
-            });
-            elevator.on("floor_button_pressed", function (floor) {
-                buttonsPressed.push(floor);
             });
         }); 
     },
